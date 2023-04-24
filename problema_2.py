@@ -53,11 +53,11 @@ class Jugador(threading.Thread):
         self.cantidad -= 10
         banca.ganar(10)
 
-        # Genera el número.
-        numero = random.randint(1, 36)
 
         # Según el tipo de juego, se realiza la apuesta.
         if tipo_de_juego == 'numero':
+            # Genera el número.
+            numero = random.randint(1, 36)
             if banca.get_numero() == numero:
                 if not banca.quiebra():
                     self.cantidad += 360

@@ -13,92 +13,75 @@ import itertools
 import collections
 from multiprocessing import Pool
 
-class Ruleta:
+class Banca:
     def __init__(self):
         self.cantidad = 50000
+        self.numero = 0
 
-    def jugar(self, cantidad):
+    def pierde(self, cantidad):
         self.cantidad -= cantidad
+
+    def generar_numero(self):
+        self.numero = random.randint(0, 36)
+
+    def get_numero(self):
+        return self.numero
 
     def ganar(self, cantidad):
         self.cantidad += cantidad
 
-class Jugador:
+    def quiebra(self):
+        if self.cantidad <= 0:
+            return True
+        else:
+            return False
+
+class Jugador(threading.Thread):
     def __init__(self):
+        threading.Thread.__init__(self)
         self.cantidad = 1000
 
-    def jugar(self, cantidad):
-        self.cantidad -= cantidad
+    def run(self):
+        while True:
+            if self.cantidad <= 0:
+                break
+            else:
+                self.jugar()
 
-    def ganar(self, cantidad):
-        self.cantidad += cantidad
+    def jugar(self, banca, tipo_de_juego):
+        # Realiza la apuesta.
+        self.cantidad -= 10
+        banca.ganar(10)
+
+        # Genera el número.
+        numero = random.randint(1, 36)
+
+        # Según el tipo de juego, se realiza la apuesta.
+        if tipo_de_juego == 'numero':
+            if banca.get_numero() == numero:
+                if not banca.quiebra():
+                    self.cantidad += 360
+                    banca.pierde(360)
+
+                else:
+                    # Detenemos el juego y todos los procesos.
+                    print('La banca se ha quedado sin dinero. Fin del juego.')
+                    exit()
+
+
+        elif tipo_de_juego == 'par_impar':
+            if banca.get_numero() % 2 == 0:
+                self.cantidad += 20
+
+        elif tipo_de_juego == 'martingala':
+            if banca.get_numero() == numero:
+                self.cantidad += 360
+            else:
+                self.cantidad -= 20
+
+
 
 
 if __name__ == '__main__':
-    ruleta = Ruleta()
-    jugador = Jugador()
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
 
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
 
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [20]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [20]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [20]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [20]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [20]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.jugar, [10]*4)
-
-    with Pool(4) as p:
-        p.map(jugador.ganar, [360]*4)
